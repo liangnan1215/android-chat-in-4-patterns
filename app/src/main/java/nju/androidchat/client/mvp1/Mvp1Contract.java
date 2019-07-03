@@ -6,6 +6,7 @@ import java.util.List;
 import nju.androidchat.client.ClientMessage;
 
 public interface Mvp1Contract {
+
     interface TalkView extends BaseView<TalkPresenter> {
         void showMessageList(List<ClientMessage> messages);
     }

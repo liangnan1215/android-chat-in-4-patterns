@@ -11,6 +11,7 @@ import lombok.ToString;
 @ToString
 @AllArgsConstructor
 public class ServerSendMessage extends Message {
+
     @Getter
     private UUID messageId;
 
