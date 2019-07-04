@@ -19,12 +19,16 @@ import lombok.extern.java.Log;
 import nju.androidchat.client.ClientMessage;
 import nju.androidchat.client.R;
 import nju.androidchat.client.Utils;
+import nju.androidchat.client.component.ItemImgReceive;
+import nju.androidchat.client.component.ItemImgSend;
 import nju.androidchat.client.component.ItemTextReceive;
 import nju.androidchat.client.component.ItemTextSend;
 import nju.androidchat.client.component.OnRecallMessageRequested;
 
 @Log
 public class Hw1TalkActivity extends AppCompatActivity implements Mvp0Contract.View, TextView.OnEditorActionListener, OnRecallMessageRequested {
+
+    private  static String p = "!\\[\\]\\(.*?\\)";
     private Mvp0Contract.Presenter presenter;
 
     @Override
@@ -57,17 +61,28 @@ public class Hw1TalkActivity extends AppCompatActivity implements Mvp0Contract.V
                     for (ClientMessage message : messages) {
                         String text = String.format("%s", message.getMessage());
                         // 如果是自己发的，增加ItemTextSend
-                        if (message.getSenderUsername().equals(this.presenter.getUsername())) {
-                            content.addView(new ItemTextSend(this, text, message.getMessageId(), this));
+                        text = text.trim();
+                        if (text.matches(p)) {
+                            String imgURL = text.substring(text.indexOf('{') + 1, text.length() - 2);
+                            System.out.println("hello   "+imgURL);
+                            if (message.getSenderUsername().equals(this.presenter.getUsername())) {
+                                content.addView(new ItemImgSend(this, imgURL, message.getMessageId(), this));
+                            } else {
+                                content.addView(new ItemImgReceive(this, imgURL, message.getMessageId()));
+                            }
                         } else {
-                            content.addView(new ItemTextReceive(this, text, message.getMessageId()));
+                            if (message.getSenderUsername().equals(this.presenter.getUsername())) {
+                                content.addView(new ItemTextSend(this, text, message.getMessageId(), this));
+                            } else {
+                                content.addView(new ItemTextReceive(this, text, message.getMessageId()));
+                            }
                         }
                     }
-
                     Utils.scrollListToBottom(this);
                 }
         );
     }
+
 
     @Override
     public void setPresenter(Mvp0Contract.Presenter presenter) {
